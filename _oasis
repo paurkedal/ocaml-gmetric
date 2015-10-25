@@ -10,7 +10,7 @@ BuildTools: ocamlbuild
 
 Library "gmetric"
   Path: lib
-  Modules:
+  Modules: Gmetric
 
 Document api
   Title: Gmetric API Reference
