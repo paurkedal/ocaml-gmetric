@@ -1,0 +1,22 @@
+OASISFormat: 0.4
+Name: gmetric
+Version: 0.1
+Synopsis: Ganglia gmetric protocol
+Authors: Petter A. Urkedal
+License: LGPL-3 with OCaml linking exception
+AlphaFeatures: pure_interface
+Plugins: DevFiles (0.4), META (0.4)
+BuildTools: ocamlbuild
+
+Library "gmetric"
+  Path: lib
+  Modules:
+
+Document api
+  Title: Gmetric API Reference
+  Type: ocamlbuild (0.4)
+  InstallDir: $htmldir/html
+  BuildTools+: ocamldoc
+  XOCamlbuildPath: lib
+  XOCamlbuildLibraries: gmetric
+  DataFiles: COPYING ($docdir), COPYING.LESSER ($docdir)
