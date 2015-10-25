@@ -44,9 +44,6 @@ let write_int32 i buf off =
   Bytes.set buf (off + 3) (chr (i land 0xffl));
   off + 4
 
-let write_float x buf off = assert false (* FIXME *)
-let write_double x buf off = assert false (* FIXME *)
-
 let size_string s = (String.length s + 7) / 4 * 4
 
 let write_string s buf off =
@@ -57,6 +54,7 @@ let write_string s buf off =
   Bytes.blit_string "\x00\x00\x00" 0 buf (bare_off + len) (bare_size - len);
   bare_off + bare_size
 
+(* No, it's not that simple!
 let size_value : type a. a Type.t -> a -> int = function
   | Type.String -> size_string
   | Type.Uint16 -> fun _ -> 4
@@ -65,7 +63,6 @@ let size_value : type a. a Type.t -> a -> int = function
   | Type.Int32 -> fun _ -> 4
   | Type.Float -> fun _ -> 4
   | Type.Double -> fun _ -> 8
-
 let write_value : type a. a Type.t -> a -> Bytes.t -> int -> int = function
   | Type.String -> write_string
   | Type.Uint16 -> write_int
@@ -74,6 +71,38 @@ let write_value : type a. a Type.t -> a -> Bytes.t -> int -> int = function
   | Type.Int32 -> write_int32
   | Type.Float -> write_float
   | Type.Double -> write_double
+*)
+
+let size_string_value s = 8 + size_string s
+let write_string_value s buf off = off
+  |> write_string "%s" buf |> write_string s buf
+
+let size_int_value i = size_string_value (string_of_int i)
+let write_int_value i = write_string_value (string_of_int i)
+
+let size_int32_value i = size_string_value (Int32.to_string i)
+let write_int32_value i = write_string_value (Int32.to_string i)
+
+let size_float_value x = size_string_value (string_of_float x)
+let write_float_value x = write_string_value (string_of_float x)
+
+let size_value : type a. a Type.t -> a -> int = function
+  | Type.String -> size_string_value
+  | Type.Uint16 -> size_int_value
+  | Type.Int16 -> size_int_value
+  | Type.Uint32 -> size_int32_value
+  | Type.Int32 -> size_int32_value
+  | Type.Float -> size_float_value
+  | Type.Double -> size_float_value
+
+let write_value : type a. a Type.t -> a -> Bytes.t -> int -> int = function
+  | Type.String -> write_string_value
+  | Type.Uint16 -> write_int_value
+  | Type.Int16 -> write_int_value
+  | Type.Uint32 -> write_int32_value
+  | Type.Int32 -> write_int32_value
+  | Type.Float -> write_float_value
+  | Type.Double -> write_float_value
 
 let hostname {default_hostname} = function
   | {gm_hostname = None} -> default_hostname
