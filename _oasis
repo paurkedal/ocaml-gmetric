@@ -8,6 +8,10 @@ AlphaFeatures: pure_interface
 Plugins: DevFiles (0.4), META (0.4)
 BuildTools: ocamlbuild
 
+Flag lwt
+  Description: build lwt concurrency support
+  Default: true
+
 Library "gmetric"
   Path: lib
   Modules:
@@ -20,6 +24,8 @@ Library "gmetric-lwt-unix"
   FindlibName: lwt-unix
   Modules: Gmetric_lwt_unix
   BuildDepends: gmetric, lwt
+  Build$: flag(lwt)
+  Install$: flag(lwt)
 
 Document api
   Title: Gmetric API Reference
